@@ -1,6 +1,7 @@
-use windows::{
-    core::*, Win32::Foundation::*, Win32::Graphics::Gdi::ValidateRect,
-    Win32::System::LibraryLoader::GetModuleHandleA, Win32::UI::WindowsAndMessaging::*,
+use windows::core::*;
+use windows::Win32::{
+    Foundation::*, Graphics::Gdi::ValidateRect, System::LibraryLoader::GetModuleHandleA,
+    UI::WindowsAndMessaging::*,
 };
 
 fn main() -> Result<()> {
