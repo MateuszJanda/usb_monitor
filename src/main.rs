@@ -9,10 +9,10 @@ fn main() -> Result<()> {
         let instance = GetModuleHandleA(None)?;
         debug_assert!(instance.0 != 0);
 
-        let window_class = s!("window");
+        // Not predefined (by MS) class name, so must be registered by RegisterClassA
+        let window_class = s!("usb_monitor_window");
 
         let wc = WNDCLASSA {
-            hCursor: LoadCursorW(None, IDC_ARROW)?,
             hInstance: instance,
             lpszClassName: window_class,
 
@@ -56,12 +56,27 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
                 println!("WM_PAINT");
                 ValidateRect(window, std::ptr::null());
                 LRESULT(0)
-            }
+            },
             WM_DESTROY => {
                 println!("WM_DESTROY");
                 PostQuitMessage(0);
                 LRESULT(0)
-            }
+            },
+            WM_DEVICECHANGE => {
+                println!("WM_DEVICECHANGE");
+
+                match wparam {
+                    DBT_DEVICEARRIVAL => {
+                        println!("DBT_DEVICEARRIVAL");
+                    },
+                    DBT_DEVICEREMOVECOMPLETE => {
+                        println!("DBT_DEVICEREMOVECOMPLETE");
+                    }
+                 _ => ()
+                }
+
+                LRESULT(0)
+            },
             _ => DefWindowProcA(window, message, wparam, lparam),
         }
     }
