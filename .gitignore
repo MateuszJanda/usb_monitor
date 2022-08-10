@@ -1,1 +1,5 @@
+*.code-workspace
+
+Cargo.lock
+
 /target
