@@ -19,5 +19,4 @@ features = [
     "Foundation",
     "Foundation_Collections",
     "Devices_Enumeration",
-    "Devices_Usb",
 ]
