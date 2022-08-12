@@ -2,7 +2,7 @@ use futures::executor::block_on;
 use std::collections::HashSet;
 
 use windows::core::*;
-use windows::Devices::{Enumeration::DeviceInformation};
+use windows::Devices::Enumeration::DeviceInformation;
 use windows::Win32::{
     Foundation::*, Graphics::Gdi::ValidateRect, System::LibraryLoader::GetModuleHandleA,
     System::SystemServices, UI::WindowsAndMessaging::*,
@@ -79,11 +79,7 @@ impl UsbMonitor {
         unsafe {
             match message as u32 {
                 WM_CREATE => {
-                    println!(
-                        "WM_CREATE, numer of archived devices: {}",
-                        self.devices.len()
-                    );
-
+                    println!("WM_CREATE, archived devices: {}", self.devices.len());
                     LRESULT(0)
                 }
 
@@ -104,14 +100,9 @@ impl UsbMonitor {
                         let future = get_all_usb_info();
                         let new_devices = block_on(future);
 
-                        // let cs = lparam.0 as *const CREATESTRUCTA;
-                        // let this = (*cs).lpCreateParams as *mut Self;
-                        // (*this).handle = window;
-
                         for device_id in new_devices {
                             if !self.devices.contains(&device_id) {
                                 println!("New device: {}", device_id);
-
                                 self.devices.insert(device_id);
                             }
                         }
@@ -135,7 +126,7 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
 
             match this.is_null() {
                 false => (*this).handle = window,
-                true => panic!("lpCreateParams is set to NULL"),
+                true => panic!("lpCreateParams is set to NULL. Check CreateWindowExA."),
             }
 
             SetWindowLongPtrA(window, GWLP_USERDATA, this as _);
