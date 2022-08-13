@@ -14,7 +14,9 @@ fn main() -> Result<()> {
 }
 
 struct UsbMonitor {
+    /// Handler to current window
     handle: HWND,
+    /// Set of all newly plugged USB devices
     devices: HashSet<String>,
 }
 
@@ -26,6 +28,7 @@ impl UsbMonitor {
         }
     }
 
+    /// Register window and run main loop.
     fn run(&mut self) -> Result<()> {
         unsafe {
             let instance = GetModuleHandleA(None)?;
