@@ -98,7 +98,7 @@ impl UsbMonitor {
                         println!("DBT_DEVICEARRIVAL ");
 
                         let future = get_all_usb_info();
-                        let new_devices = block_on(future);
+                        let new_devices = block_on(future).unwrap();
 
                         for device_id in new_devices {
                             if !self.devices.contains(&device_id) {
@@ -117,6 +117,8 @@ impl UsbMonitor {
     }
 }
 
+/// Basic function to processes messages (registered in RegisterClassA), that
+/// that pass all messages to UsbMonitor object (message_handler method).
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     unsafe {
         if message == WM_NCCREATE {
@@ -142,68 +144,21 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
     }
 }
 
-// https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/how-to-connect-to-a-usb-device--uwp-app-#finding-the-devicethe-basic-way
-async fn get_all_usb_info() -> HashSet<String> {
+/// Return raw information about USB devices (DeviceInformation.Id). Function
+/// use UWP (Universal Windows Platform) API.
+///
+/// [Finding the device](https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/how-to-connect-to-a-usb-device--uwp-app-#finding-the-devicethe-basic-way)
+async fn get_all_usb_info() -> Result<HashSet<String>> {
     let mut result = HashSet::new();
 
-    if let Ok(operation) = DeviceInformation::FindAllAsync() {
-        if let Ok(dev_info_collection) = operation.await {
-            for dev_info in dev_info_collection {
-                if let Ok(device_id) = dev_info.Id() {
-                    // if let Some(value) = usb_product_and_vendor(&device_id).await {
-
-                    //     println!("Device: {}-{} [{}]", value.0, value.1, device_id);
-
-                    //     result.insert(device_id.to_string(), value);
-                    // }
-                    // else
-                    // {
-                    //     println!("Tutaj1");
-                    // }
-
-                    if device_id.to_string().contains("\\USB#") {
-                        // result.insert(device_id.to_string(), (0,0));
-                        result.insert(device_id.to_string());
-                    }
-
-                    if let Ok(a) = dev_info.IsEnabled() {
-                        if a {
-
-                            // println!("{}", device_id);
-                        } else {
-                            // println!("False");
-                        }
-                    } else {
-                        // println!("Not enabled");
-                    }
-                }
+    let dev_info_collection = DeviceInformation::FindAllAsync()?.await?;
+    for dev_info in dev_info_collection {
+        if let Ok(device_id) = dev_info.Id() {
+            if device_id.to_string().contains("\\USB#") {
+                result.insert(device_id.to_string());
             }
         }
     }
 
-    result
+    Ok(result)
 }
-
-// async fn usb_product_and_vendor(device_id: &HSTRING) -> Option<(u32, u32)> {
-//     if let Ok(operation) = UsbDevice::FromIdAsync(&device_id) {
-//         if let Ok(usb_device) = operation.await {
-//             if let Ok(desc) = usb_device.DeviceDescriptor() {
-//                 return match (desc.ProductId(), desc.VendorId()) {
-//                     (Ok(product_id), Ok(vendor_id)) => Some((product_id, vendor_id)),
-//                     _ => {
-//                         println!("Nope!!!");
-//                         None
-//                     }
-//                 };
-//             } else {
-//                 println!("Tutaj4");
-//             }
-//         } else {
-//             println!("Tutaj3");
-//         }
-//     } else {
-//         println!("Tutaj2");
-//     }
-
-//     None
-// }
