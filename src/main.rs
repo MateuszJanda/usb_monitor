@@ -4,8 +4,7 @@ use std::collections::HashSet;
 use windows::core::*;
 use windows::Devices::Enumeration::DeviceInformation;
 use windows::Win32::{
-    Foundation::*, System::LibraryLoader::GetModuleHandleA, System::SystemServices,
-    UI::WindowsAndMessaging::*,
+    Foundation::*, System::LibraryLoader::GetModuleHandleA, UI::WindowsAndMessaging::*,
 };
 
 fn main() -> Result<()> {
@@ -62,7 +61,7 @@ impl UsbMonitor {
                 None,
                 None,
                 instance,
-                self as *mut _ as _,
+                Some(self as *mut _ as _),
             );
 
             debug_assert!(handle.0 != 0);
@@ -94,7 +93,7 @@ impl UsbMonitor {
                 }
                 WM_DEVICECHANGE => {
                     match wparam.0 as u32 {
-                        SystemServices::DBT_DEVICEARRIVAL => {
+                        DBT_DEVICEARRIVAL => {
                             println!("DBT_DEVICEARRIVAL. New device plugged.");
 
                             let future = get_all_usb_info();
@@ -109,8 +108,8 @@ impl UsbMonitor {
 
                             println!("Archived USB info: {}", self.devices.len());
                         }
-                        SystemServices::DBT_DEVICEREMOVECOMPLETE => {
-                            println!("DBT_DEVICEARRIVAL. Device unplugged.")
+                        DBT_DEVICEREMOVECOMPLETE => {
+                            println!("DBT_DEVICEREMOVECOMPLETE. Device unplugged.")
                         }
                         _ => (),
                     }
