@@ -157,7 +157,8 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
 /// Iterate trough all devices and return raw information about USB devices (DeviceInformation.Id).
 /// Function use UWP (Universal Windows Platform) API.
 ///
-/// [Finding the device](https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/how-to-connect-to-a-usb-device--uwp-app-#finding-the-devicethe-basic-way)
+/// # See also:
+/// * [Finding the device](https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/how-to-connect-to-a-usb-device--uwp-app-#finding-the-devicethe-basic-way)
 async fn get_all_usb_info() -> Result<HashSet<String>> {
     let mut result = HashSet::new();
 
