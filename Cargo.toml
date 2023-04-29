@@ -18,6 +18,7 @@ features = [
     "Win32_System_SystemServices",
     "Win32_System_LibraryLoader",
     "Win32_UI_WindowsAndMessaging",
+    "Win32_Media_Audio",
     "Foundation",
     "Foundation_Collections",
     "Devices_Enumeration",
