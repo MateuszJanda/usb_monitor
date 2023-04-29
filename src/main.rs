@@ -125,8 +125,8 @@ impl UsbMonitor {
     }
 }
 
-/// Basic function to processes messages (registered in RegisterClassA), that that pass all messages
-/// to UsbMonitor object (message_handler method).
+/// Basic function to processes messages (registered by RegisterClassA), that pass all messages
+/// to message_handler() (especially USB monitor).
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     unsafe {
         // WM_NCCREATE is called even before WM_CREATE, so this is good place to read and save
