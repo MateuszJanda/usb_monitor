@@ -1,5 +1,7 @@
 [package]
 name = "usb_monitor"
+authors = ["Mateusz Janda <mateusz.janda@gmail.com>"]
+repository = "https://github.com/MateuszJanda/usb_monitor"
 version = "0.1.0"
 edition = "2021"
 
