@@ -95,7 +95,7 @@ impl UsbMonitor {
                 WM_DEVICECHANGE => {
                     match wparam.0 as u32 {
                         DBT_DEVICEARRIVAL => {
-                            println!("DBT_DEVICEARRIVAL. New device plugged.");
+                            println!("DBT_DEVICEARRIVAL. New device plugged... やめて ください (yamete kudasai)");
                             PlaySoundA(s!("plug_in.wav"), None, SND_FILENAME | SND_ASYNC);
 
                             let future = get_all_usb_info();
